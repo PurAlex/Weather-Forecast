@@ -1,29 +1,45 @@
 var APIKey = "4b56aeae0df9855091bff3b50acba3bc";
 var cities = [];
 
-function displayCitiesInfo() {
-    // Get the lat and lon by city name
+// Function to find the lat and lon with the name of the city
+function getCitybyName() {
+
     var city = $(this).attr("data-name");
+    // URL to get the lat and lon of a city
     var cityURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + APIKey;
-    // Get the city using the variable city and cityURL
-
-
-    // var queryURL = "http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid=" + APIKey;
     console.log(cityURL);
-    // console.log(queryURL);
+    // Calls the url and get a respone
     $.ajax({
         url: cityURL,
         method: "GET"
     }).then(function (response) {
         console.log(response);
-        var lat = JSON.parse(response.name);
-        var lot = (this.name);
-        console.log(lat.name);
-        console.log(lot);
-        document.getElementById("today").innerHTML = lat.name;
+        // Calls getCitybyLatLon function
+        getCitybyLatLon(response);
     });
 }
 
+//Function to get the forecast of a city by using the lat and lon attributes
+function getCitybyLatLon(response) {
+    // Saves the response of lat in a variable
+    var lat = JSON.stringify(response[0].lat);
+    console.log(lat);
+    // Saves the response of lon in a variable
+    var lon = JSON.stringify(response[0].lon);
+    console.log(lon);
+    // URL to get the forecast using the saved variables lat and lon
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+    console.log(queryURL);
+    // Calls the url and get a response
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function (result) {
+        console.log(result);
+    })
+}
+
+// Function to create buttons for each city searched
 function renderButtons() {
     // This will delete the prior movies so the there won't appear repeated buttons
     $("#history").empty();
@@ -42,6 +58,7 @@ function renderButtons() {
     }
 }
 
+// On click event that will save the searched city on the variables cities
 $('#search-button').on('click', function (event) {
     event.preventDefault();
     // Grabs input from the textbox
@@ -58,6 +75,6 @@ $('#search-button').on('click', function (event) {
 });
 
 // Adds a click event listener to all elements with a class of "city-btn"
-$(document).on("click", ".city-btn", displayCitiesInfo);
+$(document).on("click", ".city-btn", getCitybyName);
 
 renderButtons();
