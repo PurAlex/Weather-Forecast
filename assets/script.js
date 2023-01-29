@@ -37,29 +37,36 @@ function getCitybyLatLon(response) {
         method: "GET"
     }).then(function (result) {
         console.log(result);
-
+        // Get the city name on the result
         var cityName = result.city.name;
-        var h2Tag = $('<h2>').text(cityName + " " + moment().format('D/MM/Y'))
+        // Get the icon url to be displayed with the cityname
+        var icon = result.list[0].weather[0].icon;
+        // Icon url
+        var iconURL = "http://openweathermap.org/img/wn/" + icon + ".png";
+        // Add a img tag and set to the src of the image the iconURL
+        var iconImg = $('<img>').attr("src", iconURL);
+        // Display the city name with the date and the icon
+        var h2Tag = $('<h2>').text(cityName + " " + moment().format('D/MM/Y') + iconImg);
         console.log(h2Tag);
-
+        // Get and display the temperature and convert it from K to C
         var tempC = result.list[0].main.temp - 273.15;
         var pOne = $("<p>").text("Temp: " + tempC.toFixed(2) + "℃");
-        console.log(pOne);
-
+        // Get and display the wind speed
         var wind = result.list[0].wind.speed;
         var pTwo = $('<p>').text("Wind: " + wind + " KPH");
-        console.log(pTwo);
-
+        // Get and display the humidity
         var humidity = result.list[0].main.humidity;
         var pThree = $('<p>').text("Humidity: " + humidity + "%");
-        console.log(pThree)
-
+        // Append all the tags to the id today
         today.append(h2Tag);
+        h2Tag.append(iconImg);
         today.append(pOne);
         today.append(pTwo);
         today.append(pThree);
     })
 }
+
+
 
 // Function to create buttons for each city searched
 function renderButtons() {
