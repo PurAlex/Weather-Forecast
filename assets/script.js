@@ -47,7 +47,7 @@ function getCitybyLatLon(response) {
         // Add a img tag and set to the src of the image the iconURL
         var iconImg = $('<img>').attr("src", iconURL);
         // Display the city name with the date and the icon
-        var h2Tag = $('<h2>').text(cityName + " " + moment().format('D/MM/Y') + iconImg);
+        var h2Tag = $('<h2>').text(cityName + " (" + moment().format('D/MM/Y') + ")");
         console.log(h2Tag);
         // Get and display the temperature and convert it from K to C
         var tempC = result.list[0].main.temp - 273.15;
@@ -59,6 +59,8 @@ function getCitybyLatLon(response) {
         var humidity = result.list[0].main.humidity;
         var pThree = $('<p>').text("Humidity: " + humidity + "%");
         // Append all the tags to the id today
+        today.addClass("card");
+
         today.append(h2Tag);
         h2Tag.append(iconImg);
         today.append(pOne);
@@ -82,16 +84,22 @@ function futureDayForecast(result) {
 
         var futureHumidity = $('<div>').text("Humidity: " + result.list[i].main.humidity + "%");
 
+        var futureIcon = result.list[i].weather[0].icon;
+        var futureiIconURL = "http://openweathermap.org/img/wn/" + futureIcon + "@2x.png";
+        var futureForecastIcon = $('<img>').attr("src", futureiIconURL);
+
         futureWeather.prepend(forecast);
 
         var cards = $('<div>').addClass("card").appendTo(futureWeather);
         var cardBody = $('<div>').addClass("card-body").appendTo(cards);
         $(futureDate).addClass("card-title").appendTo(cardBody);
+        $(futureForecastIcon).appendTo(cardBody)
         $(futureTemp).addClass('card-text').appendTo(cardBody);
         $(futureWind).addClass('card-text').appendTo(cardBody);
         $(futureHumidity).addClass('card-text').appendTo(cardBody);
     }
 }
+
 
 // Function to create buttons for each city searched
 function renderButtons() {
@@ -120,10 +128,11 @@ $('#search-button').on('click', function (event) {
 
     // Clear out the value in the input field
     $('#search-input').val("");
+    today.text("");
+    futureWeather.text("");
 
     // Adding city from the textbox to the array cities
     cities.push(city);
-
     // Will call renderButtons which handles the processing of city array.
     renderButtons();
 });
