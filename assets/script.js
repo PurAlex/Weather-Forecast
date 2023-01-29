@@ -1,6 +1,7 @@
 var APIKey = "4b56aeae0df9855091bff3b50acba3bc";
 var cities = [];
 var today = $('#today');
+var futureWeather = $('#forecast')
 
 // Function to find the lat and lon with the name of the city
 function getCitybyName() {
@@ -63,10 +64,34 @@ function getCitybyLatLon(response) {
         today.append(pOne);
         today.append(pTwo);
         today.append(pThree);
+
+        futureDayForecast(result);
     })
 }
 
+function futureDayForecast(result) {
+    var forecast = $('<h4>').text("5-Day Forecast:");
 
+
+    for (var i = 7; i < result.list.length; i += 8) {
+        var futureDate = $('<h5>').text(moment.unix(result.list[i].dt).format("D/MM/Y"));
+        var kToC = result.list[i].main.temp - 273.15;
+        var futureTemp = $('<div>').text("Temp: " + kToC.toFixed(2) + "℃");
+
+        var futureWind = $('<div>').text("Wind: " + result.list[i].wind.speed + " KPH");
+
+        var futureHumidity = $('<div>').text("Humidity: " + result.list[i].main.humidity + "%");
+
+        futureWeather.prepend(forecast);
+
+        var cards = $('<div>').addClass("card").appendTo(futureWeather);
+        var cardBody = $('<div>').addClass("card-body").appendTo(cards);
+        $(futureDate).addClass("card-title").appendTo(cardBody);
+        $(futureTemp).addClass('card-text').appendTo(cardBody);
+        $(futureWind).addClass('card-text').appendTo(cardBody);
+        $(futureHumidity).addClass('card-text').appendTo(cardBody);
+    }
+}
 
 // Function to create buttons for each city searched
 function renderButtons() {
@@ -102,6 +127,7 @@ $('#search-button').on('click', function (event) {
     // Will call renderButtons which handles the processing of city array.
     renderButtons();
 });
+
 
 // Adds a click event listener to all elements with a class of "city-btn"
 $(document).on("click", ".city-btn", getCitybyName);

@@ -6,3 +6,11 @@
     width: 200px;
     margin: 5px;
 }
+
+#today {
+    border: 1px solid black;
+}
+
+.card {
+    margin: 5px;
+}
