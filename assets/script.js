@@ -1,5 +1,6 @@
 var APIKey = "4b56aeae0df9855091bff3b50acba3bc";
 var cities = [];
+var today = $('#today');
 
 // Function to find the lat and lon with the name of the city
 function getCitybyName() {
@@ -23,10 +24,10 @@ function getCitybyName() {
 function getCitybyLatLon(response) {
     // Saves the response of lat in a variable
     var lat = JSON.stringify(response[0].lat);
-    console.log(lat);
+    // console.log(lat);
     // Saves the response of lon in a variable
     var lon = JSON.stringify(response[0].lon);
-    console.log(lon);
+    // console.log(lon);
     // URL to get the forecast using the saved variables lat and lon
     var queryURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
     console.log(queryURL);
@@ -36,6 +37,27 @@ function getCitybyLatLon(response) {
         method: "GET"
     }).then(function (result) {
         console.log(result);
+
+        var cityName = result.city.name;
+        var h2Tag = $('<h2>').text(cityName + " " + moment().format('D/MM/Y'))
+        console.log(h2Tag);
+
+        var tempC = result.list[0].main.temp - 273.15;
+        var pOne = $("<p>").text("Temp: " + tempC.toFixed(2) + "℃");
+        console.log(pOne);
+
+        var wind = result.list[0].wind.speed;
+        var pTwo = $('<p>').text("Wind: " + wind + " KPH");
+        console.log(pTwo);
+
+        var humidity = result.list[0].main.humidity;
+        var pThree = $('<p>').text("Humidity: " + humidity + "%");
+        console.log(pThree)
+
+        today.append(h2Tag);
+        today.append(pOne);
+        today.append(pTwo);
+        today.append(pThree);
     })
 }
 
