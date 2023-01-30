@@ -3,13 +3,11 @@ var cities = [];
 var today = $('#today');
 var futureWeather = $('#forecast')
 
-
-var getSavedCities = JSON.parse(localStorage.getItem("city-btn"));
+// localStorage.setItem("card", JSON.stringify(cards));
+getSavedCities = JSON.parse(localStorage.getItem(today));
 console.log(getSavedCities);
-function displayPastCities() {
+today.text(getSavedCities);
 
-    getSavedCities.textContent = $('#history');
-}
 // Function to find the lat and lon with the name of the city
 function getCitybyName() {
 
@@ -79,8 +77,8 @@ function getCitybyLatLon(response) {
 }
 
 function futureDayForecast(result) {
-    var forecast = $('<h4>').text("5-Day Forecast:");
 
+    var forecast = $('<h4>').text("5-Day Forecast:");
 
     for (var i = 7; i < result.list.length; i += 8) {
         var futureDate = $('<h5>').text(moment.unix(result.list[i].dt).format("D/MM/Y"));
@@ -95,16 +93,19 @@ function futureDayForecast(result) {
         var futureiIconURL = "http://openweathermap.org/img/wn/" + futureIcon + "@2x.png";
         var futureForecastIcon = $('<img>').attr("src", futureiIconURL);
 
-        futureWeather.prepend(forecast);
 
+        futureWeather.prepend(forecast);
         var cards = $('<div>').addClass("card").appendTo(futureWeather);
         var cardBody = $('<div>').addClass("card-body").appendTo(cards);
+
         $(futureDate).addClass("card-title").appendTo(cardBody);
         $(futureForecastIcon).appendTo(cardBody)
         $(futureTemp).addClass('card-text').appendTo(cardBody);
         $(futureWind).addClass('card-text').appendTo(cardBody);
         $(futureHumidity).addClass('card-text').appendTo(cardBody);
+
     }
+
 }
 
 
@@ -112,6 +113,7 @@ function futureDayForecast(result) {
 function renderButtons() {
     // This will delete the prior movies so the there won't appear repeated buttons
     $("#history").empty();
+    $("#today-view").empty();
 
     // Loops through the array of citites
     for (var i = 0; i < cities.length; i++) {
@@ -125,8 +127,9 @@ function renderButtons() {
         btnHistory.text(cities[i]);
         // Adds the button to the history
         $("#history").append(btnHistory);
+        $('#today-view').append(document.querySelectorAll("card"));
 
-        localStorage.setItem("city-btn", JSON.stringify(cities));
+        // localStorage.setItem("city-btn", JSON.stringify(cities));
 
     }
 }
@@ -141,19 +144,21 @@ $('#search-button').on('click', function (event) {
     // Clear out the value in the input field
     $('#search-input').val("");
 
-    // Clear out the input when a city is clicked
+    // Clear out the input when search button is clicked
     today.text("");
     futureWeather.text("");
 
     // Adding city from the textbox to the array cities
     cities.push(city);
     // Will call renderButtons which handles the processing of city array.
+
     renderButtons();
 });
 
 
 // Adds a click event listener to all elements with a class of "city-btn"
 $(document).on("click", ".city-btn", getCitybyName);
+
 
 
 renderButtons();
