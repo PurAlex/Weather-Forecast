@@ -2,11 +2,68 @@ var APIKey = "4b56aeae0df9855091bff3b50acba3bc";
 var cities = [];
 var today = $('#today');
 var futureWeather = $('#forecast')
+var savedCities;
+var lastSearched;
 
-// localStorage.setItem("card", JSON.stringify(cards));
-getSavedCities = JSON.parse(localStorage.getItem(today));
-console.log(getSavedCities);
-today.text(getSavedCities);
+if (localStorage.getItem("cities")) {
+    savedCities = JSON.parse(localStorage.getItem("cities"));
+    console.log(savedCities);
+
+    for (var i = 0; i < savedCities.length; i++) {
+        lastSearched = savedCities.length - 1;
+        var lastCity = savedCities[lastSearched];
+    }
+} else {
+    cities;
+};
+
+renderButtons();
+
+// On click event that will save the searched city on the variables cities
+$('#search-button').on('click', function (event) {
+    event.preventDefault();
+    // Grabs input from the textbox
+    var city = $('#search-input').val().trim();
+
+    // Clear out the value in the input field
+    $('#search-input').val("");
+
+    // Clear out the input when search button is clicked
+    today.text("");
+    futureWeather.text("");
+
+    // Adding city from the textbox to the array cities
+    cities.push(city);
+
+    localStorage.setItem("cities", JSON.stringify(cities));
+
+    // Will call renderButtons which handles the processing of city array.
+    renderButtons();
+});
+
+
+// Function to create buttons for each city searched
+function renderButtons() {
+    // This will delete the prior movies so the there won't appear repeated buttons
+    $("#history").empty();
+    // $("#today-view").empty();
+
+    // Loops through the array of citites
+    for (var i = 0; i < cities.length; i++) {
+        // This will dynamicaly generate buttons for each movie in the array 
+        var btnHistory = $('<button>');
+        // Adds a class of city-btn to the button
+        btnHistory.addClass("city-btn");
+        // Adds a data-attribute
+        btnHistory.attr("data-name", cities[i]);
+        //Provides the initial button text
+        btnHistory.text(cities[i]);
+        // Adds the button to the history
+        $("#history").append(btnHistory);
+    };
+
+    // localStorage.setItem('city-btn', JSON.stringify(btnHistory));
+}
 
 // Function to find the lat and lon with the name of the city
 function getCitybyName() {
@@ -28,6 +85,8 @@ function getCitybyName() {
 
 //Function to get the forecast of a city by using the lat and lon attributes
 function getCitybyLatLon(response) {
+    // Delete the content of today so it won't be displayed when another city is clicked
+    today.empty();
     // Saves the response of lat in a variable
     var lat = JSON.stringify(response[0].lat);
     // console.log(lat);
@@ -76,10 +135,12 @@ function getCitybyLatLon(response) {
     })
 }
 
+// Function to get the forecast of 5 days
 function futureDayForecast(result) {
-
+    // Delete the content of forecast so it won't be displayed when another city is clicked
+    futureWeather.empty();
     var forecast = $('<h4>').text("5-Day Forecast:");
-
+    // Loop to loop through the result of the url and display the next 5 weather
     for (var i = 7; i < result.list.length; i += 8) {
         var futureDate = $('<h5>').text(moment.unix(result.list[i].dt).format("D/MM/Y"));
         var kToC = result.list[i].main.temp - 273.15;
@@ -93,11 +154,10 @@ function futureDayForecast(result) {
         var futureiIconURL = "http://openweathermap.org/img/wn/" + futureIcon + "@2x.png";
         var futureForecastIcon = $('<img>').attr("src", futureiIconURL);
 
-
+        // Append  all elements to the id forecast
         futureWeather.prepend(forecast);
         var cards = $('<div>').addClass("card").appendTo(futureWeather);
         var cardBody = $('<div>').addClass("card-body").appendTo(cards);
-
         $(futureDate).addClass("card-title").appendTo(cardBody);
         $(futureForecastIcon).appendTo(cardBody)
         $(futureTemp).addClass('card-text').appendTo(cardBody);
@@ -108,57 +168,7 @@ function futureDayForecast(result) {
 
 }
 
-
-// Function to create buttons for each city searched
-function renderButtons() {
-    // This will delete the prior movies so the there won't appear repeated buttons
-    $("#history").empty();
-    $("#today-view").empty();
-
-    // Loops through the array of citites
-    for (var i = 0; i < cities.length; i++) {
-        // This will dynamicaly generate buttons for each movie in the array 
-        var btnHistory = $('<button>');
-        // Adds a class of city-btn to the button
-        btnHistory.addClass("city-btn");
-        // Adds a data-attribute
-        btnHistory.attr("data-name", cities[i]);
-        //Provides the initial button text
-        btnHistory.text(cities[i]);
-        // Adds the button to the history
-        $("#history").append(btnHistory);
-        $('#today-view').append(document.querySelectorAll("card"));
-
-        // localStorage.setItem("city-btn", JSON.stringify(cities));
-
-    }
-}
-
-
-// On click event that will save the searched city on the variables cities
-$('#search-button').on('click', function (event) {
-    event.preventDefault();
-    // Grabs input from the textbox
-    var city = $('#search-input').val().trim();
-
-    // Clear out the value in the input field
-    $('#search-input').val("");
-
-    // Clear out the input when search button is clicked
-    today.text("");
-    futureWeather.text("");
-
-    // Adding city from the textbox to the array cities
-    cities.push(city);
-    // Will call renderButtons which handles the processing of city array.
-
-    renderButtons();
-});
-
-
 // Adds a click event listener to all elements with a class of "city-btn"
 $(document).on("click", ".city-btn", getCitybyName);
 
 
-
-renderButtons();

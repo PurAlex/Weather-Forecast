@@ -9,9 +9,9 @@ After the user load the page the previous searched cities are saved on the local
 
 ## Screenshots
 
-![Screenshot of the scheduler]()
+![Screenshot of the weather dashboard](/assets/screenshots/weather1.jpg)
 
-![Screenshot of the scheduler]()
+![Screenshot of the weather dashboard](/assets/screenshots/weather2.jpg)
 
 ## Installation
 
