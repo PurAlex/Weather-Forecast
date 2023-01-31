@@ -19,7 +19,7 @@ N/A
 
 ## Usage
 
-To access the scheduler [click here]()
+To access the weather dashboard [click here]()
 
 ## Credits
 
