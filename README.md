@@ -19,7 +19,7 @@ N/A
 
 ## Usage
 
-To access the weather dashboard [click here]()
+To access the weather dashboard [click here](https://puralex.github.io/Weather-Forecast/)
 
 ## Credits
 
